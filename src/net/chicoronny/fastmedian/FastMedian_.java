@@ -72,6 +72,7 @@ public class FastMedian_<T extends RealType<T> & NativeType<T>> implements PlugI
 		final ImageStack stack = img.getStack();
 		final int stackSize = stack.getSize();
 		final Queue<Img<T>> imageList = new ArrayDeque<>();
+		Queue<Img<T>> oldList = new ArrayDeque<>();
 		
 		for (int i = 1; i <= stackSize; i++) {
 			Object ip = stack.getPixels(i);
@@ -81,14 +82,15 @@ public class FastMedian_<T extends RealType<T> & NativeType<T>> implements PlugI
 			if (i % numberOfFrames == 0){
 				process(imageList);
 				if (imageA != null) 
-					interpolate(imageList);
+					interpolate(oldList);
 				imageA = imageB;
+				oldList.addAll(imageList);
 				imageList.clear();
 			}
 		}
 		process(imageList);
 		if (imageA != null) 
-			interpolate(imageList);
+			interpolate(oldList);
 		img.updateAndDraw();
 		return;
 	}	
